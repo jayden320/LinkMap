@@ -11,12 +11,12 @@
 ## 使用说明
 
 1、打开LinkMap.xcodeproj，并运行，就可以看到工具界面
-<img src="https://github.com/huanxsd/LinkMap/blob/master/ScreenShot/ScreenShot1.png" alt="ScreenShot1" title="ScreenShot1">
+<img src="https://github.com/huanxsd/LinkMap/blob/master/ScreenShot1.png" alt="ScreenShot1" title="ScreenShot1">
 
 2、点击“选择文件”按钮，选择LinkMap文件（如何生成LinkMap详见下方的：如何获得LinkMap文件）
 
 3、点击“开始”按钮，就可以看到每个类/静态库所占用的空间大小
-<img src="https://github.com/huanxsd/LinkMap/blob/master/ScreenShot/ScreenShot2.png" alt="ScreenShot2" title="ScreenShot2">
+<img src="https://github.com/huanxsd/LinkMap/blob/master/ScreenShot2.png" alt="ScreenShot2" title="ScreenShot2">
 
 4、点击“输出文件”，可以将结果输出到文本文档中
 
