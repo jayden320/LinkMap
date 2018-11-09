@@ -23,6 +23,8 @@
 @property (strong) NSURL *linkMapFileURL;
 @property (strong) NSString *linkMapContent;
 
+@property (nonatomic, assign) NSControlStateValue groupButtonState;
+@property (nonatomic, copy) NSString *searchKey;
 @property (strong) NSMutableString *result;//分析的结果
 
 @end
@@ -45,6 +47,8 @@
     5.点击“输出文件”，得到解析后的Link Map文件 \n\
     6. * 输入目标文件的关键字(例如：libIM)，然后点击“开始”。实现搜索功能 \n\
     7. * 勾选“分组解析”，然后点击“开始”。实现对不同库的目标文件进行分组";
+    
+    _groupButton.state = NSControlStateValueOn;
 }
 
 - (IBAction)chooseFile:(id)sender {
@@ -69,6 +73,9 @@
         return;
     }
     
+    self.groupButtonState = _groupButton.state;
+    self.searchKey = _searchField.stringValue;
+    
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         NSString *content = [NSString stringWithContentsOfURL:_linkMapFileURL encoding:NSMacOSRomanStringEncoding error:nil];
         
@@ -91,7 +98,7 @@
         
         NSArray *sortedSymbols = [self sortSymbols:symbols];
         
-        if (_groupButton.state == 1) {
+        if (_groupButtonState == 1) {
             [self buildCombinationResultWithSymbols:sortedSymbols];
         } else {
             [self buildResultWithSymbols:sortedSymbols];
@@ -171,7 +178,7 @@
     self.result = [@"文件大小\t文件名称\r\n\r\n" mutableCopy];
     NSUInteger totalSize = 0;
     
-    NSString *searchKey = _searchField.stringValue;
+    NSString *searchKey = _searchKey;
     
     for(SymbolModel *symbol in symbols) {
         if (searchKey.length > 0) {
@@ -220,7 +227,7 @@
     
     NSArray *sortedSymbols = [self sortSymbols:combinationSymbols];
     
-    NSString *searchKey = _searchField.stringValue;
+    NSString *searchKey = _searchKey;
     
     for(SymbolModel *symbol in sortedSymbols) {
         if (searchKey.length > 0) {
