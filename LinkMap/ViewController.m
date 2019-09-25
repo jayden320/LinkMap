@@ -91,7 +91,12 @@
         
         NSArray *sortedSymbols = [self sortSymbols:symbols];
         
-        if (_groupButton.state == 1) {
+        __block NSControlStateValue groupButtonState;
+        dispatch_sync(dispatch_get_main_queue(), ^{
+            groupButtonState = _groupButton.state;
+        });
+        
+        if (1 == groupButtonState) {
             [self buildCombinationResultWithSymbols:sortedSymbols];
         } else {
             [self buildResultWithSymbols:sortedSymbols];
@@ -171,7 +176,11 @@
     self.result = [@"文件大小\t文件名称\r\n\r\n" mutableCopy];
     NSUInteger totalSize = 0;
     
-    NSString *searchKey = _searchField.stringValue;
+    __block NSString *searchKey;
+    dispatch_sync(dispatch_get_main_queue(), ^{
+        searchKey = _searchField.stringValue;
+    });
+
     
     for(SymbolModel *symbol in symbols) {
         if (searchKey.length > 0) {
