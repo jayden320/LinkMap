@@ -101,7 +101,7 @@
         
         NSArray *sortedSymbols = [strongSelf sortSymbols:symbols];
         
-        __block NSControlStateValue groupButtonState;
+        __block NSControlStateValue groupButtonState = 0;
         dispatch_sync(dispatch_get_main_queue(), ^{
             if (weakSelf == nil) return;
             __strong typeof(weakSelf) strongSelf = weakSelf;
