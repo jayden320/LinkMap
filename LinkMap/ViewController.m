@@ -54,11 +54,14 @@
     panel.resolvesAliases = NO;
     panel.canChooseFiles = YES;
     
+    __weak typeof(self) weakSelf = self;
     [panel beginWithCompletionHandler:^(NSInteger result){
         if (result == NSFileHandlingPanelOKButton) {
             NSURL *document = [[panel URLs] objectAtIndex:0];
-            _filePathField.stringValue = document.path;
-            self.linkMapFileURL = document;
+            if (weakSelf == nil) return;
+            __strong typeof(weakSelf) strongSelf = weakSelf;
+            strongSelf->_filePathField.stringValue = document.path;
+            strongSelf.linkMapFileURL = document;
         }
     }];
 }
@@ -69,43 +72,54 @@
         return;
     }
     
+    __weak typeof(self) weakSelf = self;
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        NSString *content = [NSString stringWithContentsOfURL:_linkMapFileURL encoding:NSMacOSRomanStringEncoding error:nil];
+        if (weakSelf == nil) return;
+        __strong typeof(weakSelf) strongSelf = weakSelf;
+        NSString *content = [NSString stringWithContentsOfURL:strongSelf->_linkMapFileURL encoding:NSMacOSRomanStringEncoding error:nil];
         
-        if (![self checkContent:content]) {
+        if (![strongSelf checkContent:content]) {
             dispatch_async(dispatch_get_main_queue(), ^{
-                [self showAlertWithText:@"Link Map文件格式有误"];
+                if (weakSelf == nil) return;
+                __strong typeof(weakSelf) strongSelf = weakSelf;
+                [strongSelf showAlertWithText:@"Link Map文件格式有误"];
             });
             return ;
         }
         
         dispatch_async(dispatch_get_main_queue(), ^{
-            self.indicator.hidden = NO;
-            [self.indicator startAnimation:self];
+            if (weakSelf == nil) return;
+            __strong typeof(weakSelf) strongSelf = weakSelf;
+            strongSelf.indicator.hidden = NO;
+            [strongSelf.indicator startAnimation:self];
             
         });
         
-        NSDictionary *symbolMap = [self symbolMapFromContent:content];
+        NSDictionary *symbolMap = [strongSelf symbolMapFromContent:content];
         
         NSArray <SymbolModel *>*symbols = [symbolMap allValues];
         
-        NSArray *sortedSymbols = [self sortSymbols:symbols];
+        NSArray *sortedSymbols = [strongSelf sortSymbols:symbols];
         
-        __block NSControlStateValue groupButtonState;
+        __block NSControlStateValue groupButtonState = 0;
         dispatch_sync(dispatch_get_main_queue(), ^{
-            groupButtonState = _groupButton.state;
+            if (weakSelf == nil) return;
+            __strong typeof(weakSelf) strongSelf = weakSelf;
+            groupButtonState = strongSelf->_groupButton.state;
         });
         
         if (1 == groupButtonState) {
-            [self buildCombinationResultWithSymbols:sortedSymbols];
+            [strongSelf buildCombinationResultWithSymbols:sortedSymbols];
         } else {
-            [self buildResultWithSymbols:sortedSymbols];
+            [strongSelf buildResultWithSymbols:sortedSymbols];
         }
         
         dispatch_async(dispatch_get_main_queue(), ^{
-            self.contentTextView.string = _result;
-            self.indicator.hidden = YES;
-            [self.indicator stopAnimation:self];
+            if (weakSelf == nil) return;
+            __strong typeof(weakSelf) strongSelf = weakSelf;
+            strongSelf.contentTextView.string = strongSelf->_result;
+            strongSelf.indicator.hidden = YES;
+            [strongSelf.indicator stopAnimation:self];
             
         });
     });
@@ -253,13 +267,16 @@
     [panel setResolvesAliases:NO];
     [panel setCanChooseFiles:NO];
     
+    __weak typeof(self) weakSelf = self;
     [panel beginWithCompletionHandler:^(NSInteger result) {
         if (result == NSFileHandlingPanelOKButton) {
+            if (weakSelf == nil) return;
+            __strong typeof(weakSelf) strongSelf = weakSelf;
             NSURL*  theDoc = [[panel URLs] objectAtIndex:0];
             NSMutableString *content =[[NSMutableString alloc]initWithCapacity:0];
             [content appendString:[theDoc path]];
             [content appendString:@"/linkMap.txt"];
-            [_result writeToFile:content atomically:YES encoding:NSUTF8StringEncoding error:nil];
+            [strongSelf->_result writeToFile:content atomically:YES encoding:NSUTF8StringEncoding error:nil];
         }
     }];
 }
